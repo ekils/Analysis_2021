@@ -1,0 +1,34 @@
+# for stock_price.py:
+connect_frequency: 5000
+end_date: "2020-06-01"
+
+
+
+# for scheduler.py:
+stock_alert_percent: -5.
+
+interval_setting_notify: 
+  seconds: 20
+  minutes: 2
+interval_setting_scheduled_job: 
+  seconds: 30
+  minutes: 2
+
+cron_setting_nitify:
+  day_of_week: 'mon-fri'
+  hour: 18
+  minute : 40
+
+cron_setting_scheduled_job:
+  day_of_week: 'mon-fri'
+  hour: 18
+  minute : 30
+
+
+cron_setting_wakeup_db:
+  day_of_week: 'mon-fri'
+  hour: 18
+  minute : 25
+
+# postgres connection url:
+db_url: 'cdsryopoetpaqs:a5bbaacdf037ba45fd735b641f6e6dac19ad8bacd6d2c88472cc4c494eac79e8@ec2-54-205-183-19.compute-1.amazonaws.com:5432/denagoqfrdmknf'
