@@ -117,7 +117,7 @@ def crawl_financial_Report(*args):
 ############################################  [TEST]   ########################################################
 def call_FinancialAccountingList(year, stocks):
     if year > 101: 
-        for season in [1,2,3,4]:
+        for season in [1]:
             FinancialAccountingList_After = IFRS_After(year, stocks, season)
             for fa in FinancialAccountingList_After:
                 print('*****************************     [ AFTER: {}  ]       **************************************'.format(fa))
@@ -233,13 +233,14 @@ def call_by_year(stocks):
     # YEAR_List_Before101 = [97]
     # for year in YEAR_List_Before101:
     #     _ = call_FinancialAccountingList(year, stocks)
-    YEAR_List_After101 = [108, 109]
+    YEAR_List_After101 = [108]
     for year in YEAR_List_After101:
         _ = call_FinancialAccountingList(year, stocks)
     return 
 ############################################  [TEST Done]   ########################################################
 
 def go_stock(stocks):
+    bible = pd.read_excel('stockbible.xlsx', index_col=0) 
     _ = call_by_year(stocks)
     return 
 
@@ -251,4 +252,4 @@ go_stock(2330)
 # go_stock(9955)
 
 
-#%%
+# %%
