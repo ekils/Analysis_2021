@@ -14,7 +14,7 @@ def IFRS_After(*args):
     STOCK = args[1]
     SEASON = args[2]
     # 綜合資產負債表(IFRS後)
-    BalanceSheetURL_After101 = "ttps://mops.twse.com.tw/mops/web/ajax_t163sb05?encodeURIComponent=1&step=1&firstin=1&off=1&isQuery=Y&TYPEK=sii&year={}&season=0{}".format(YEAR, SEASON)
+    BalanceSheetURL_After101 = "https://mops.twse.com.tw/mops/web/ajax_t163sb05?encodeURIComponent=1&step=1&firstin=1&off=1&isQuery=Y&TYPEK=sii&year={}&season=0{}".format(YEAR, SEASON)
 
     # 綜合損益表(IFRS後)
     ProfitAndLoseURL_After101 = "https://mops.twse.com.tw/mops/web/ajax_t163sb04?encodeURIComponent=1&step=1&firstin=1&off=1&isQuery=Y&TYPEK=sii&year={}&season=0{}".format(YEAR, SEASON)
@@ -117,7 +117,7 @@ def crawl_financial_Report(*args):
 ############################################  [TEST]   ########################################################
 def call_FinancialAccountingList(year, stocks):
     if year > 101: 
-        for season in [1]:
+        for season in [1,2,3,4]:
             FinancialAccountingList_After = IFRS_After(year, stocks, season)
             for fa in FinancialAccountingList_After:
                 print('*****************************     [ AFTER: {}  ]       **************************************'.format(fa))
@@ -148,6 +148,25 @@ def call_FinancialAccountingList(year, stocks):
                             got = got.to_frame().T
                             print(got.to_markdown())
                             break
+
+                # 資產負債表:
+                elif 'ajax_t163sb05' in fa:
+                    report = report[1:-1]
+                    for i in range(len(report)):
+                        report[i].columns = report[i].columns.get_level_values(0)  
+                    for r in report: # 因為列表裡面很多 '公司代號' 跟 數字 塞在一起, 所以先清乾淨
+                        indexNames = r[ r['公司代號'] == '公司代號' ].index
+                        r.drop(indexNames , inplace=True)
+                        r['公司代號'] = r['公司代號'].astype('int64')
+                    report = [i.set_index('公司代號') for i in report]
+
+                    for i in report:
+                        if int(stocks) in i.index:
+                            got = i.loc[int(stocks)]
+                            got = got.to_frame().T
+                            print(got.to_markdown())
+                            break
+
 
                      
     else:
@@ -188,14 +207,33 @@ def call_FinancialAccountingList(year, stocks):
                             got = got.to_frame().T
                             print(got.to_markdown())
                             break
-        
+
+                # 資產負債表:
+                elif 'ajax_t51sb12' in fa:
+                    for i in range(len(report)):
+                        report[i].columns = report[i].columns.get_level_values(0)  
+                    report = [i for i in report if '公司代號' in i.columns.tolist()]
+                    for i in range(len(report)):
+                        report[i].columns = report[i].columns.get_level_values(0)  
+                    for r in report: # 因為列表裡面很多 '公司代號' 跟 數字 塞在一起, 所以先清乾淨
+                        indexNames = r[ r['公司代號'] == '公司代號' ].index
+                        r.drop(indexNames , inplace=True)
+                        r['公司代號'] = r['公司代號'].astype('int64')
+                    report = [i.set_index('公司代號') for i in report]
+                    for i in report:
+                        if int(stocks) in i.index:
+                            got = i.loc[int(stocks)]
+                            got = got.to_frame().T
+                            print(got.to_markdown())
+                            break
+
     return 
 
 def call_by_year(stocks):
-    YEAR_List_Before101 = [97]
-    for year in YEAR_List_Before101:
-        _ = call_FinancialAccountingList(year, stocks)
-    YEAR_List_After101 = [109]
+    # YEAR_List_Before101 = [97]
+    # for year in YEAR_List_Before101:
+    #     _ = call_FinancialAccountingList(year, stocks)
+    YEAR_List_After101 = [108, 109]
     for year in YEAR_List_After101:
         _ = call_FinancialAccountingList(year, stocks)
     return 
@@ -206,8 +244,8 @@ def go_stock(stocks):
     return 
 
 
-# go_stock(2330)
-go_stock(2880)
+go_stock(2330)
+# go_stock(2880)
 # go_stock(2317)
 # go_stock(2379)
 # go_stock(9955)
